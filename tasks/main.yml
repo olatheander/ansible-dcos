@@ -3,8 +3,6 @@
   include: "{{ ansible_distribution }}/main.yml"
 
 - name: Install required software (unzip, ipset etc.)
-  become: yes
-  become_method: sudo
   package: name={{item}} state=latest
   with_items:
   - ipset
@@ -21,20 +19,14 @@
   file: path={{dcos_temp_dir}}/{{bootstrap_script}} state=touch mode=0700
 
 - name: Run the DCOS installer for masters
-  become: yes
-  become_method: sudo
   command: bash {{dcos_temp_dir}}/{{bootstrap_script}} master
   when: groups['tag_dcos_master'] is defined and inventory_hostname in groups['tag_dcos_master']
 
 - name: Run the DCOS installer for slaves
-  become: yes
-  become_method: sudo
   command: bash {{dcos_temp_dir}}/{{bootstrap_script}} slave
   when: groups['tag_dcos_slave'] is defined and inventory_hostname in groups['tag_dcos_slave']
 
 - name: Run the DCOS installer for public slaves
-  become: yes
-  become_method: sudo
   command: bash {{dcos_temp_dir}}/{{bootstrap_script}} slave_public
   when: groups['tag_dcos_slave_public'] is defined and inventory_hostname in groups['tag_dcos_slave_public']
 
